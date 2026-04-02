@@ -1,0 +1,15 @@
+# Skills to remove from Kimaki after upgrades.
+# One skill directory name per line. Lines starting with # are ignored.
+
+egaki
+errore
+event-sourcing-state
+goke
+jitter
+npm-package
+spiceflow
+termcast
+tuistory
+x-articles
+zele
+zustand-centralized-state
