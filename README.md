@@ -1,6 +1,6 @@
 # kimaki-config
 
-Shared Kimaki configuration for the fleet. Runs on every crew VPS after Kimaki upgrades to enforce fleet-wide standards.
+Shared [Kimaki](https://github.com/remorses/kimaki) configuration for the fleet. Runs on every crew VPS after Kimaki upgrades to enforce fleet-wide standards.
 
 ## What it does
 
