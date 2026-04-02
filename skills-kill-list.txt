@@ -11,5 +11,6 @@ spiceflow
 termcast
 tuistory
 x-articles
+playwriter
 zele
 zustand-centralized-state
