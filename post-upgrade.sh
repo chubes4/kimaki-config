@@ -24,7 +24,7 @@ while IFS= read -r skill || [[ -n "$skill" ]]; do
   if [[ -d "$target" ]]; then
     rm -rf "$target"
     echo "kimaki-config: removed $skill"
-    ((removed++))
+    removed=$((removed + 1))
   fi
 done < "$KILL_LIST"
 
