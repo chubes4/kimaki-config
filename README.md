@@ -1,48 +1,37 @@
-# kimaki-config
+# ⚠️ ARCHIVED — moved to wp-coding-agents
 
-Shared [Kimaki](https://github.com/remorses/kimaki) configuration for the fleet. Runs on every crew VPS after Kimaki upgrades to enforce fleet-wide standards.
+**This repo is no longer maintained.** Its contents have been absorbed into [Extra-Chill/wp-coding-agents](https://github.com/Extra-Chill/wp-coding-agents) under the `kimaki/` directory, which is now the single source of truth for fleet Kimaki configuration.
 
-## What it does
+## New location
 
-- **Skill kill list** — removes bundled Kimaki skills that aren't useful for our WordPress/Extra Chill workflow
-- **Context filter plugin** — strips Kimaki's built-in memory and scheduling from the agent context when an external system (Data Machine) manages those concerns
+| Old path (here) | New path (wp-coding-agents) |
+|-----------------|------------------------------|
+| `skills-kill-list.txt` | `kimaki/skills-kill-list.txt` |
+| `post-upgrade.sh` | `kimaki/post-upgrade.sh` |
+| `plugins/*.ts` | `kimaki/plugins/*.ts` |
 
-## Usage
+## Why
 
-### Install on a new server
+`wp-coding-agents` installs and configures Kimaki as part of the VPS bootstrap (`setup.sh`) and provides an idempotent upgrade path (`upgrade.sh`). Keeping the Kimaki config alongside the install script eliminates drift between what gets deployed and what the fleet runs.
+
+## If you're on an old VPS
+
+The contents of `/opt/kimaki-config/` are still used at runtime — the install layout hasn't changed. What changed is the authoritative upstream:
 
 ```bash
-git clone https://github.com/chubes4/kimaki-config.git /opt/kimaki-config
+# Old (DO NOT USE — this repo is archived):
+# git clone https://github.com/chubes4/kimaki-config.git /opt/kimaki-config
 
-# Add ExecStartPre to kimaki.service
-systemctl edit kimaki
-# Add under [Service]:
-#   ExecStartPre=/opt/kimaki-config/post-upgrade.sh
-systemctl daemon-reload
-systemctl restart kimaki
+# New workflow — pull updates via wp-coding-agents/upgrade.sh:
+cd /var/lib/datamachine/workspace/wp-coding-agents
+git pull origin main
+./upgrade.sh --kimaki-only
 ```
 
-### Enable the context filter plugin
+If your VPS still has a `.git` inside `/opt/kimaki-config/` pointing at this repo, remove it — it is no longer tracked:
 
-Add to your project's `opencode.json`:
-
-```json
-{
-  "plugin": ["/opt/kimaki-config/plugins/fleet-context-filter.ts"]
-}
+```bash
+rm -rf /opt/kimaki-config/.git
 ```
 
-This strips:
-- **MEMORY.md injection** — Kimaki reads `MEMORY.md` from the project directory and injects it on first message. Conflicts with Data Machine's own memory files.
-- **"Update MEMORY.md" reminder** — On idle gaps > 10 minutes, Kimaki tells the agent to update `MEMORY.md`. Redundant with external memory management.
-- **Scheduling instructions** — ~50 lines about `kimaki send --send-at`, cron, and task management. Conflicts with Data Machine scheduling.
-
-### Update the kill list
-
-Edit `skills-kill-list.txt` (one skill name per line), commit, push. Then `git pull` on each server — it takes effect on the next Kimaki restart.
-
-## Files
-
-- `skills-kill-list.txt` — skill directory names to remove (one per line)
-- `post-upgrade.sh` — script that reads the kill list and removes matching skills
-- `plugins/fleet-context-filter.ts` — OpenCode plugin that strips memory/scheduling from agent context
+See [wp-coding-agents/kimaki/](https://github.com/Extra-Chill/wp-coding-agents/tree/main/kimaki) for the current files.
